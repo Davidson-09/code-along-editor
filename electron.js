@@ -1,6 +1,7 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, Notification, dialog} = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
+const { buildTree } = require('./src/utility/buildFileTree');
 
 let mainWindow;
 
@@ -9,13 +10,31 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
       worldSafeExecuteJavaScript: true,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
     alwaysOnTop: true
   });
+
+  ipcMain.on('notify', (_, message)=>{
+    new Notification({title: 'Notification', body: message}).show()
+  })
+
+  ipcMain.handle('open file dialog', ()=>{
+    try{
+      const result = dialog.showOpenDialog(mainWindow, {
+        properties: ['openDirectory']
+      })
+      console.log(result)
+      return result
+    }catch(e){
+      throw new Error(e)
+    }
+  })
+
+  ipcMain.handle('build file tree', (_, folderPath)=>(buildTree(folderPath)))
 
   const startURL = isDev
     ? 'http://localhost:3000'
@@ -39,3 +58,4 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
