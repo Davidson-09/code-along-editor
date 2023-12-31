@@ -22,6 +22,7 @@ export default function EditorPage() {
         }
       }
       getFileTree().then(tree=>{
+        console.log(tree)
         setFileTree(tree)
       })
     }

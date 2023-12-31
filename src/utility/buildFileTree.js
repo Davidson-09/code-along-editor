@@ -2,6 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 function buildTree(folderPath) {
+    let fileItems = {
+        root:{
+            index: 'root',
+            isFolder: true,
+            children: [],
+            data: folderPath
+        }
+    }
     const tree = {};
 
     function addToTree(currentNode, filePath) {
@@ -12,25 +20,39 @@ function buildTree(folderPath) {
         }, currentNode);
     }
 
-    function exploreFolder(currentNode, folderPath) {
-        try{
-            const contents = fs.readdirSync(folderPath);
-            contents.forEach((item) => {
-                const itemPath = path.join(folderPath, item);
-                if (fs.statSync(itemPath).isDirectory()) {
-                    addToTree(currentNode, itemPath);
-                    exploreFolder(currentNode[item], itemPath);
-                } else {
-                    addToTree(currentNode, itemPath);
+    function exploreFolder(currentNode, folderPath, currentItem) {
+        const contents = fs.readdirSync(folderPath);
+        contents.forEach((item) => {
+            // add every file and folder to the root object
+            if (currentItem){
+                fileItems[currentItem].children.push(item)
+            }else{
+                fileItems.root.children.push(item)
+            }
+            // create file objects for each file and folder
+            const itemPath = path.join(folderPath, item);
+            if (fs.statSync(itemPath).isDirectory()) {
+                fileItems[item] = {
+                    index: item,
+                    isFolder: true,
+                    children: [],
+                    data: item,
                 }
-            });
-        }catch(e){
-            throw new Error(e)
-        }
+                addToTree(currentNode, itemPath);
+                exploreFolder(currentNode[item], itemPath, item);
+            } else {
+                fileItems[item] = {
+                    index: item,
+                    children: [],
+                    data: item,
+                }
+                addToTree(currentNode, itemPath);
+            }
+        });
     }
 
     exploreFolder(tree, folderPath);
-    return tree;
+    return fileItems;
 }
 
 function printTree(tree, indent = 0) {
