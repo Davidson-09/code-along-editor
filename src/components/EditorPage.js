@@ -22,7 +22,6 @@ export default function EditorPage() {
         }
       }
       getFileTree().then(tree=>{
-        console.log(tree)
         setFileTree(tree)
       })
     }
@@ -52,8 +51,8 @@ export default function EditorPage() {
         <div className='p-3'>
               <img src={fileIcon} alt='files' onClick={handleFileView} className='cursor-pointer'/>
         </div>
-        <Editor height="100vh" defaultLanguage="javascript" defaultValue="//code along" theme='vs-dark' />;
-        {fileSelectorIsVisible && <FileSelector fileTree={fileTree}/>}
+        <Editor height="100vh" defaultLanguage="javascript" defaultValue="//code along"  />;
+        {fileSelectorIsVisible && <FileSelector fileTree={fileTree} setIsVisble={setFileSelectorIsVisible}/>}
     </div>
   )
 }
