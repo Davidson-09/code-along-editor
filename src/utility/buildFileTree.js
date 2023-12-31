@@ -36,17 +36,8 @@ function buildTree(folderPath) {
             data: folderPath
         }
     }
-    const tree = {};
 
-    function addToTree(currentNode, filePath) {
-        const parts = path.relative(folderPath, filePath).split(path.sep);
-        parts.reduce((node, part) => {
-            node[part] = node[part] || {};
-            return node[part];
-        }, currentNode);
-    }
-
-    function exploreFolder(currentNode, folderPath, currentItem) {
+    function exploreFolder(folderPath, currentItem) {
         const contents = fs.readdirSync(folderPath);
         contents.forEach((item) => {
             // add every file and folder to the root object
@@ -64,20 +55,18 @@ function buildTree(folderPath) {
                     children: [],
                     data: item,
                 }
-                addToTree(currentNode, itemPath);
-                exploreFolder(currentNode[item], itemPath, item);
+                exploreFolder(itemPath, item);
             } else {
                 fileItems[item] = {
                     index: item,
                     children: [],
                     data: item,
                 }
-                addToTree(currentNode, itemPath);
             }
         });
     }
 
-    exploreFolder(tree, folderPath);
+    exploreFolder(folderPath);
     return fileItems;
 }
 
