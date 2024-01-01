@@ -54,6 +54,7 @@ function buildTree(folderPath) {
                     isFolder: true,
                     children: [],
                     data: item,
+                    path: itemPath
                 }
                 exploreFolder(itemPath, item);
             } else {
@@ -61,6 +62,7 @@ function buildTree(folderPath) {
                     index: item,
                     children: [],
                     data: item,
+                    path: itemPath
                 }
             }
         });

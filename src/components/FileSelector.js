@@ -1,9 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider } from 'react-complex-tree';
 import 'react-complex-tree/lib/style-modern.css';
 import cancelIcon from '../assets/icons/cancel.svg'
 
-export default function FileSelector({fileTree, setIsVisble}) {
+export default function FileSelector({fileTree, setIsVisble, setData}) {
+
+    const openFile = async (item)=>{
+        try{
+            const data = await window.electronApi.filesApi.openFile(item)
+            setData(data)
+        } catch(e){
+            alert(e)
+        }
+    }
 
     return (
     <div className='h-screen absolute bg-white border border-black border-r-gray-700 z-10 top-0 overflow-scroll max-w-sm'>
@@ -17,6 +26,8 @@ export default function FileSelector({fileTree, setIsVisble}) {
         <UncontrolledTreeEnvironment
         dataProvider={new StaticTreeDataProvider(fileTree, (item, data) => ({ ...item, data }))}
         getItemTitle={item => item.data}
+        onFocusItem={item => openFile(item)}
+        onRenameItem={item => console.log('item renamed')}
         viewState={{}}
         >
             <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />

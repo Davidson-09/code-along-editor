@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, Notification, dialog} = require('electron')
 const path = require('path');
 const isDev = require('electron-is-dev');
 const { buildTree } = require('./src/utility/buildFileTree');
+const { openFile } = require('./src/utility/fileFunctions');
 
 let mainWindow;
 
@@ -27,7 +28,6 @@ function createWindow() {
       const result = dialog.showOpenDialog(mainWindow, {
         properties: ['openDirectory']
       })
-      console.log(result)
       return result
     }catch(e){
       throw new Error(e)
@@ -35,6 +35,19 @@ function createWindow() {
   })
 
   ipcMain.handle('build file tree', (_, folderPath)=>(buildTree(folderPath)))
+
+  ipcMain.handle('open file', (_, item)=>(openFile(item)))
+
+  ipcMain.handle('open save file dialog', (_, folderPath)=>{
+    try{
+      const result = dialog.showSaveDialog(mainWindow, {
+        defaultPath: folderPath
+      })
+      return result
+    }catch(e){
+      throw new Error(e)
+    }
+  })
 
   const startURL = isDev
     ? 'http://localhost:3000'
