@@ -3,18 +3,41 @@ import { Editor } from '@monaco-editor/react'
 import fileIcon from '../assets/icons/files.svg'
 import FileSelector from './FileSelector'
 import newFileIcon from '../assets/icons/newFile.svg'
+import { useDispatch, useSelector } from 'react-redux'
+import { changeCurrentFile } from '../redux/features/currentFIle/currentFileSlice'
+import { getProgrammingLanguage } from '../utility/fileFunctions'
 
 export default function EditorPage() {
 
   const [selectedFolderPath, setSelectedFolderPath] = useState(null)
   const [fileTree, setFileTree] = useState(null)
   const [fileSelectorIsVisible, setFileSelectorIsVisible] = useState(false)
-  const [data, setData] = useState(null)
+  const [editorValue, setEditorValue] = useState(null)
   const [editorIsVisible, setEditorIsVisible] = useState(false)
+  const [currentFileName, setCurrentFileName] = useState('')
+  const [currentLanguage, setCurrentLanguage] = useState('')
+  const dispatch = useDispatch()
 
+  const currentFile = useSelector(state => state.currentFile.value)
   
+  const handleKeyDown = (event) => {
+    // Check if Ctrl (or Command on Mac) and 's' are pressed
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      event.preventDefault(); // Prevent the default browser save action
+      // Your custom logic for Ctrl+s goes here
+      console.log("Ctrl+s pressed!");
+    }
+  };
 
   useEffect(()=>{
+    // load current file
+    if (currentFile){
+      setEditorValue(currentFile.fileContent)
+      setCurrentFileName(currentFile.index)
+      setCurrentLanguage(currentFile.programmingLanguage.toLowerCase())
+    }
+
+    // build the file tree for the sidebar
     if (selectedFolderPath !== null){
       const getFileTree =async ()=>{
         try{
@@ -28,7 +51,10 @@ export default function EditorPage() {
         setFileTree(tree)
       })
     }
-  }, [selectedFolderPath])
+    
+    // implement the key bindings
+    document.addEventListener('keydown', handleKeyDown)
+  }, [selectedFolderPath, currentFile])
 
   const openFolderSelect= async ()=>{
     try{
@@ -41,8 +67,23 @@ export default function EditorPage() {
 
   const handleCreateNewFile = async()=>{
     try{
-      console.log(JSON.stringify(selectedFolderPath))
+      // create the file
       const result = await window.electronApi.filesApi.saveNewFile(selectedFolderPath)
+      // set current file to the new file
+      if (!result.canceled){
+        const lastSeparatorIndex = result.filePath.lastIndexOf('/')
+        const fileName = result.filePath.substring(lastSeparatorIndex + 1)
+        const newFileItem = {
+          index: fileName,
+          data: fileName,
+          path: result.filePath,
+          isNewFile: true,
+          programmingLanguage: getProgrammingLanguage(result.filePath),
+          fileContent: ''
+        }
+        dispatch(changeCurrentFile(newFileItem))
+      }
+      // add the new file to folder structure
     } catch(e){
       alert(e)
     }
@@ -50,14 +91,17 @@ export default function EditorPage() {
 
   const handlefolderBtnClick =()=>{
     openFolderSelect().then((result)=>{
-      console.log(result, 'second result')
       if(!result.canceled){
         setSelectedFolderPath(result.filePaths[0])
         setEditorIsVisible(true)
       }
     }).catch((e)=>{
-      alert('error occured while choosing folder')
+      alert(e)
     })
+  }
+
+  const handleEditorChange =(value)=>{
+    setEditorValue(value)
   }
 
   return (
@@ -65,14 +109,17 @@ export default function EditorPage() {
       {
         editorIsVisible?(
           <div>
-            {fileSelectorIsVisible && <FileSelector fileTree={fileTree} setIsVisble={setFileSelectorIsVisible} setData={setData} />}
+            {fileSelectorIsVisible && <FileSelector fileTree={fileTree} setIsVisble={setFileSelectorIsVisible} setData={setEditorValue} />}
             <div className='p-3 flex space-x-4'>
-                  <img src={fileIcon} alt='files' onClick={()=>setFileSelectorIsVisible(true)} className='cursor-pointer h-6 w-6'/>
-                  <img src={newFileIcon} alt='create new file' onClick={handleCreateNewFile} className='cursor-pointer h-6 w-6'/>
+              <div className='flex space-x-4'>
+                <img src={fileIcon} alt='files' onClick={()=>setFileSelectorIsVisible(true)} className='cursor-pointer h-6 w-6'/>
+                <img src={newFileIcon} alt='create new file' onClick={handleCreateNewFile} className='cursor-pointer h-6 w-6'/>
+              </div>
+              <p className='flex-1 text-center'>{currentFileName} {currentFile && editorValue !== currentFile.fileContent && <span>*</span>}</p>
             </div>
             {
-              data !== null? (
-                <Editor height="100vh" defaultLanguage='javascript' defaultValue="//code along"  value={data}/>
+              editorValue !== null? (
+                <Editor height="100vh" defaultLanguage='javascript' language={currentLanguage} value={editorValue} onChange={(value)=> handleEditorChange(value)}/>
               ):(
                 <div className='h-screen w-full bg-gray-100 flex justify-center items-center'>
                   <p>Click on file icon to select a file or create a new file to get started</p>

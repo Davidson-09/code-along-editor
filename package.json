@@ -26,6 +26,7 @@
     "react": "^18.2.0",
     "react-complex-tree": "^2.3.2",
     "react-dom": "^18.2.0",
+    "react-redux": "^9.0.4",
     "react-scripts": "5.0.1",
     "styled-components": "^6.1.1",
     "web-vitals": "^2.1.4"
@@ -65,5 +66,10 @@
     "tailwindcss": "^3.3.6",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
+  },
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
   }
 }

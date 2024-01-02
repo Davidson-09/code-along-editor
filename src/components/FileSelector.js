@@ -8,6 +8,7 @@ export default function FileSelector({fileTree, setIsVisble, setData}) {
     const openFile = async (item)=>{
         try{
             const data = await window.electronApi.filesApi.openFile(item)
+            // set current file
             setData(data)
         } catch(e){
             alert(e)
