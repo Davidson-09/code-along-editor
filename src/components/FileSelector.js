@@ -2,14 +2,26 @@ import React, { useEffect } from 'react'
 import { UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider } from 'react-complex-tree';
 import 'react-complex-tree/lib/style-modern.css';
 import cancelIcon from '../assets/icons/cancel.svg'
+import { getProgrammingLanguage } from '../utility/fileFunctions';
+import { useDispatch } from 'react-redux'
+import { changeCurrentFile } from '../redux/features/currentFIle/currentFileSlice'
 
 export default function FileSelector({fileTree, setIsVisble, setData}) {
 
+    const dispatch = useDispatch()
+
     const openFile = async (item)=>{
         try{
-            const data = await window.electronApi.filesApi.openFile(item)
-            // set current file
-            setData(data)
+            const fileContent = await window.electronApi.filesApi.openFile(item)
+            const newCurrentFile = {
+                ...item,
+                isNewFile: false,
+                programmingLanguage: getProgrammingLanguage(item.path),
+                fileContent
+            }
+            console.log(newCurrentFile, 'the new item')
+            dispatch(changeCurrentFile(newCurrentFile))
+            // update current file item
         } catch(e){
             alert(e)
         }

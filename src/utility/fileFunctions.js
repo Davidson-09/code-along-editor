@@ -20,7 +20,7 @@ function getFileExtension(filePath) {
     } else {
       return ''; // No extension found
     }
-  }
+}
 
 function getProgrammingLanguage(filePath) {
     const fileExtension = getFileExtension(filePath);
@@ -45,4 +45,10 @@ function getProgrammingLanguage(filePath) {
     }
 }
 
-module.exports = {openFile, getFileExtension, getProgrammingLanguage}
+const saveFile = (filePath, content) => {
+    fs.writeFile(filePath, content, (err) => {
+        return
+    });
+};
+
+module.exports = {openFile, getFileExtension, getProgrammingLanguage, saveFile}

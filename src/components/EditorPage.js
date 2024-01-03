@@ -5,36 +5,29 @@ import FileSelector from './FileSelector'
 import newFileIcon from '../assets/icons/newFile.svg'
 import { useDispatch, useSelector } from 'react-redux'
 import { changeCurrentFile } from '../redux/features/currentFIle/currentFileSlice'
-import { getProgrammingLanguage } from '../utility/fileFunctions'
+import { getProgrammingLanguage} from '../utility/fileFunctions'
 
 export default function EditorPage() {
 
   const [selectedFolderPath, setSelectedFolderPath] = useState(null)
   const [fileTree, setFileTree] = useState(null)
   const [fileSelectorIsVisible, setFileSelectorIsVisible] = useState(false)
-  const [editorValue, setEditorValue] = useState(null)
+  const [editorValue, setEditorValue] = useState(null) // content of the editor
   const [editorIsVisible, setEditorIsVisible] = useState(false)
   const [currentFileName, setCurrentFileName] = useState('')
   const [currentLanguage, setCurrentLanguage] = useState('')
   const dispatch = useDispatch()
 
   const currentFile = useSelector(state => state.currentFile.value)
-  
-  const handleKeyDown = (event) => {
-    // Check if Ctrl (or Command on Mac) and 's' are pressed
-    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-      event.preventDefault(); // Prevent the default browser save action
-      // Your custom logic for Ctrl+s goes here
-      console.log("Ctrl+s pressed!");
-    }
-  };
 
+  // first useEffect
   useEffect(()=>{
     // load current file
     if (currentFile){
       setEditorValue(currentFile.fileContent)
       setCurrentFileName(currentFile.index)
       setCurrentLanguage(currentFile.programmingLanguage.toLowerCase())
+      
     }
 
     // build the file tree for the sidebar
@@ -51,10 +44,37 @@ export default function EditorPage() {
         setFileTree(tree)
       })
     }
-    
-    // implement the key bindings
-    document.addEventListener('keydown', handleKeyDown)
   }, [selectedFolderPath, currentFile])
+
+  //second useEffect
+  useEffect(()=>{
+    const handleKeyDown = async (event) => {
+      // Check if Ctrl (or Command on Mac) and 's' are pressed
+      if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+        event.preventDefault(); // Prevent the default browser save action
+        // Your custom logic for Ctrl+s goes her
+        if (currentFile){
+          if (currentFile.fileContent !== editorValue){
+            try{
+              const filePath = currentFile.path
+              await window.electronApi.filesApi.saveFileChanges({filePath, newValue:editorValue})
+              // update the value of current file
+              const updatedFileItem = {...currentFile}
+              updatedFileItem.fileContent = editorValue
+              dispatch(changeCurrentFile(updatedFileItem))
+            }catch(e){
+              alert(e)
+            }
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown)
+    return ()=>{
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [editorValue, currentFile, dispatch])
 
   const openFolderSelect= async ()=>{
     try{

@@ -21,6 +21,9 @@ contextBridge.exposeInMainWorld('electronApi', {
     },
     saveNewFile(folderPath){
       return ipcRenderer.invoke('open save file dialog', folderPath)
+    },
+    saveFileChanges({filePath, newValue}){
+      return ipcRenderer.invoke('save file', {filePath, newValue})
     }
   }
 })

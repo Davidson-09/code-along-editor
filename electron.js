@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, Notification, dialog} = require('electron')
 const path = require('path');
 const isDev = require('electron-is-dev');
 const { buildTree } = require('./src/utility/buildFileTree');
-const { openFile } = require('./src/utility/fileFunctions');
+const { openFile, saveFile } = require('./src/utility/fileFunctions');
 
 let mainWindow;
 
@@ -44,6 +44,15 @@ function createWindow() {
         defaultPath: folderPath
       })
       return result
+    }catch(e){
+      throw new Error(e)
+    }
+  })
+
+  ipcMain.handle('save file', (_, {filePath, newValue})=>{
+    console.log(newValue, 'the new value')
+    try{
+      saveFile(filePath, newValue)
     }catch(e){
       throw new Error(e)
     }
