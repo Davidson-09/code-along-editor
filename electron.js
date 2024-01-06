@@ -3,6 +3,10 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const { buildTree } = require('./src/utility/buildFileTree');
 const { openFile, saveFile } = require('./src/utility/fileFunctions');
+const os = require("os")
+const pty = require("node-pty")
+
+var shell = os.platform() === "win32" ? "powershell.exe" : "bash";
 
 let mainWindow;
 
@@ -65,6 +69,22 @@ function createWindow() {
   mainWindow.loadURL(startURL);
 
   mainWindow.on('closed', () => (mainWindow = null));
+
+  var ptyprocess = pty.spawn(shell, [], {
+    name: "xterm-color",
+    cols: 80,
+    rows: 24,
+    cwd: `${process.env.HOME}/Desktop`,
+    env: process.env
+  })
+
+  ptyprocess.on("data", function(data){
+    mainWindow.webContents.send("terminal.incdata", data) // respond to incoming data from the local machine
+  })
+
+  ipcMain.on("terminal.toTerm", function(event, data){
+    ptyprocess.write(data) //respond to data from xterm in the renderer process
+  })
 }
 
 app.on('ready', createWindow);

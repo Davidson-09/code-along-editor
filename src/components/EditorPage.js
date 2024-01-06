@@ -6,6 +6,7 @@ import newFileIcon from '../assets/icons/newFile.svg'
 import { useDispatch, useSelector } from 'react-redux'
 import { changeCurrentFile } from '../redux/features/currentFIle/currentFileSlice'
 import { getProgrammingLanguage} from '../utility/fileFunctions'
+import TerminalComponent from './TerminalComponent'
 
 export default function EditorPage() {
 
@@ -157,6 +158,7 @@ export default function EditorPage() {
           </div>
         )
       }
+      <TerminalComponent/>
     </div>
   )
 }
