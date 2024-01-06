@@ -25,15 +25,5 @@ contextBridge.exposeInMainWorld('electronApi', {
     saveFileChanges({filePath, newValue}){
       return ipcRenderer.invoke('save file', {filePath, newValue})
     }
-  },
-  terminalApi:{
-    writeToTerminal(data){
-      return ipcRenderer.send("terminal.toTerm", data)
-    },
-    onIncomingTerminalData(callback){
-      ipcRenderer.on("terminal.incdata", (_event, data)=>{
-        callback(data)
-      })
-    }
   }
 })

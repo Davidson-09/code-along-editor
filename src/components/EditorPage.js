@@ -6,7 +6,6 @@ import newFileIcon from '../assets/icons/newFile.svg'
 import { useDispatch, useSelector } from 'react-redux'
 import { changeCurrentFile } from '../redux/features/currentFIle/currentFileSlice'
 import { getProgrammingLanguage} from '../utility/fileFunctions'
-import TerminalComponent from './TerminalComponent'
 
 export default function EditorPage() {
 
@@ -17,7 +16,6 @@ export default function EditorPage() {
   const [editorIsVisible, setEditorIsVisible] = useState(false)
   const [currentFileName, setCurrentFileName] = useState('')
   const [currentLanguage, setCurrentLanguage] = useState('')
-  const [terminalIsVisible, setTerminalIsVisible] = useState(false)
   const dispatch = useDispatch()
 
   const currentFile = useSelector(state => state.currentFile.value)
@@ -71,10 +69,6 @@ export default function EditorPage() {
         }
       }
 
-      if ((event.ctrlKey || event.metaKey) && event.key === 't'){
-        setTerminalIsVisible(prevValue => !prevValue)
-      }
-
     };
 
     document.addEventListener('keydown', handleKeyDown)
@@ -120,7 +114,6 @@ export default function EditorPage() {
     openFolderSelect().then((result)=>{
       if(!result.canceled){
         setSelectedFolderPath(result.filePaths[0])
-        setTerminalIsVisible(true)
         setEditorIsVisible(true)
       }
     }).catch((e)=>{
@@ -150,7 +143,7 @@ export default function EditorPage() {
                 <Editor height="100vh" defaultLanguage='javascript' language={currentLanguage} value={editorValue} onChange={(value)=> handleEditorChange(value)}/>
               ):(
                 <div className='h-screen w-full bg-gray-100 flex justify-center items-center'>
-                  <p>Click on file icon to select a file or create a new file to get started</p>
+                  <p>Click on the file icon in the top left corner to select a file or create a new file to get started</p>
                 </div>
               )
             }
@@ -165,7 +158,7 @@ export default function EditorPage() {
           </div>
         )
       }
-      <TerminalComponent setTerminalIsVisible={setTerminalIsVisible} terminalIsVisible={terminalIsVisible}/>
+      {/* <TerminalComponent setTerminalIsVisible={setTerminalIsVisible} terminalIsVisible={terminalIsVisible}/> */}
     </div>
   )
 }
