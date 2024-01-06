@@ -17,6 +17,7 @@ export default function EditorPage() {
   const [editorIsVisible, setEditorIsVisible] = useState(false)
   const [currentFileName, setCurrentFileName] = useState('')
   const [currentLanguage, setCurrentLanguage] = useState('')
+  const [terminalIsVisible, setTerminalIsVisible] = useState(false)
   const dispatch = useDispatch()
 
   const currentFile = useSelector(state => state.currentFile.value)
@@ -69,6 +70,11 @@ export default function EditorPage() {
           }
         }
       }
+
+      if ((event.ctrlKey || event.metaKey) && event.key === 't'){
+        setTerminalIsVisible(prevValue => !prevValue)
+      }
+
     };
 
     document.addEventListener('keydown', handleKeyDown)
@@ -114,6 +120,7 @@ export default function EditorPage() {
     openFolderSelect().then((result)=>{
       if(!result.canceled){
         setSelectedFolderPath(result.filePaths[0])
+        setTerminalIsVisible(true)
         setEditorIsVisible(true)
       }
     }).catch((e)=>{
@@ -158,7 +165,7 @@ export default function EditorPage() {
           </div>
         )
       }
-      <TerminalComponent/>
+      <TerminalComponent setTerminalIsVisible={setTerminalIsVisible} terminalIsVisible={terminalIsVisible}/>
     </div>
   )
 }

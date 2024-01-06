@@ -27,11 +27,29 @@ function createWindow() {
     new Notification({title: 'Notification', body: message}).show()
   })
 
-  ipcMain.handle('open file dialog', ()=>{
+  ipcMain.handle('open file dialog', async ()=>{
     try{
-      const result = dialog.showOpenDialog(mainWindow, {
+      const result = await dialog.showOpenDialog(mainWindow, {
         properties: ['openDirectory']
       })
+      console.log(result, 'the result')
+      if (!result.canceled){
+        var ptyprocess = pty.spawn(shell, [], {
+          name: "xterm-color",
+          cols: 80,
+          rows: 24,
+          cwd: result.filePaths[0],
+          env: process.env
+        })
+      
+        ptyprocess.on("data", function(data){
+          mainWindow.webContents.send("terminal.incdata", data) // respond to incoming data from the local machine
+        })
+      
+        ipcMain.on("terminal.toTerm", function(event, data){
+          ptyprocess.write(data) //respond to data from xterm in the renderer process
+        })
+      }
       return result
     }catch(e){
       throw new Error(e)
@@ -69,22 +87,6 @@ function createWindow() {
   mainWindow.loadURL(startURL);
 
   mainWindow.on('closed', () => (mainWindow = null));
-
-  var ptyprocess = pty.spawn(shell, [], {
-    name: "xterm-color",
-    cols: 80,
-    rows: 24,
-    cwd: `${process.env.HOME}/Desktop`,
-    env: process.env
-  })
-
-  ptyprocess.on("data", function(data){
-    mainWindow.webContents.send("terminal.incdata", data) // respond to incoming data from the local machine
-  })
-
-  ipcMain.on("terminal.toTerm", function(event, data){
-    ptyprocess.write(data) //respond to data from xterm in the renderer process
-  })
 }
 
 app.on('ready', createWindow);
