@@ -166,7 +166,7 @@ export default function EditorPage() {
                 <Editor height="100vh" defaultLanguage='javascript' language={currentLanguage} value={editorValue} onChange={(value)=> handleEditorChange(value)}/>
               ):(
                 <div className='h-screen w-full bg-gray-100 flex justify-center items-center'>
-                  <p>Click on the file icon in the top left corner to select a file or create a new file to get started</p>
+                  <p className='text-center px-4'>Click on the file icon in the top left corner to select a file or create a new file to get started</p>
                 </div>
               )
             }
