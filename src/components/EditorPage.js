@@ -16,6 +16,7 @@ export default function EditorPage() {
   const [editorIsVisible, setEditorIsVisible] = useState(false)
   const [currentFileName, setCurrentFileName] = useState('')
   const [currentLanguage, setCurrentLanguage] = useState('')
+  const [reload, setReload] = useState(0)
   const dispatch = useDispatch()
 
   const currentFile = useSelector(state => state.currentFile.value)
@@ -23,6 +24,7 @@ export default function EditorPage() {
   // first useEffect
   useEffect(()=>{
     // load current file
+    console.log(currentFile, 'the ccc')
     if (currentFile){
       setEditorValue(currentFile.fileContent)
       setCurrentFileName(currentFile.index)
@@ -44,7 +46,7 @@ export default function EditorPage() {
         setFileTree(tree)
       })
     }
-  }, [selectedFolderPath, currentFile])
+  }, [selectedFolderPath, currentFile, reload])
 
   //second useEffect
   useEffect(()=>{
@@ -69,13 +71,27 @@ export default function EditorPage() {
         }
       }
 
+      // key binding for deleting files
+      if ((event.ctrlKey || event.metaKey) && event.key === 'd'){
+        event.preventDefault();
+        // delete current file
+        if (currentFile){
+          await window.electronApi.filesApi.deleteFile(currentFile.path)
+          dispatch(changeCurrentFile(null))
+          setReload(prevVal=> prevVal+1)
+          setEditorValue(null)
+          setCurrentFileName('')
+          setFileSelectorIsVisible(false)
+        }
+      }
+
     };
 
     document.addEventListener('keydown', handleKeyDown)
     return ()=>{
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [editorValue, currentFile, dispatch])
+  }, [editorValue, currentFile, dispatch, reload])
 
   const openFolderSelect= async ()=>{
     try{

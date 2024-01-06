@@ -24,6 +24,12 @@ contextBridge.exposeInMainWorld('electronApi', {
     },
     saveFileChanges({filePath, newValue}){
       return ipcRenderer.invoke('save file', {filePath, newValue})
+    },
+    deleteFile(filePath){
+      return ipcRenderer.invoke('delete file', filePath)
+    },
+    renameFile(filePath, name){
+      return ipcRenderer.invoke('rename file', {filePath, name})
     }
   }
 })

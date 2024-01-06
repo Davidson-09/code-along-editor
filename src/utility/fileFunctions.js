@@ -51,4 +51,24 @@ const saveFile = (filePath, content) => {
     });
 };
 
-module.exports = {openFile, getFileExtension, getProgrammingLanguage, saveFile}
+const deleteFile = (filePath) => {
+    fs.unlink(filePath, (err) => {
+        if (err) {
+            alert("could not delete file")
+        }
+    });
+};
+
+const renameFile = (oldPath, newName) => {
+    const pathParts = oldPath.split('/');
+    const lastPart = pathParts.pop();
+    const newPath = pathParts.join('/') + `/${newName}`;
+    fs.rename(oldPath, newPath, (err) => {
+        if (err) {
+            console.error(`Error renaming file from ${oldPath} to ${newPath}: ${err}`);
+        } 
+    });
+};
+
+
+module.exports = {openFile, getFileExtension, getProgrammingLanguage, saveFile, deleteFile, renameFile}

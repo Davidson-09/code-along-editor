@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, Notification, dialog} = require('electron')
 const path = require('path');
 const isDev = require('electron-is-dev');
 const { buildTree } = require('./src/utility/buildFileTree');
-const { openFile, saveFile } = require('./src/utility/fileFunctions');
+const { openFile, saveFile, deleteFile, renameFile } = require('./src/utility/fileFunctions');
 const os = require("os")
 const pty = require("node-pty")
 
@@ -56,6 +56,22 @@ function createWindow() {
   ipcMain.handle('save file', (_, {filePath, newValue})=>{
     try{
       saveFile(filePath, newValue)
+    }catch(e){
+      throw new Error(e)
+    }
+  })
+
+  ipcMain.handle('delete file', (_, filePath)=>{
+    try{
+      deleteFile(filePath)
+    }catch(e){
+      throw new Error(e)
+    }
+  })
+
+  ipcMain.handle('rename file', (_, {filePath, name})=>{
+    try{
+      renameFile(filePath, name)
     }catch(e){
       throw new Error(e)
     }
