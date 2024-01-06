@@ -28,7 +28,7 @@ export default function FileSelector({fileTree, setIsVisble, setData}) {
     }
 
     return (
-    <div className='h-screen absolute bg-white border border-black border-r-gray-700 z-10 top-0 overflow-scroll max-w-sm'>
+    <div className='h-screen absolute bg-white border border-black border-r-gray-700 z-30 top-0 overflow-scroll max-w-sm'>
         <div className='bg-gray-200 flex items-center justify-between p-3'>
             <p className='text-black'>File Explorer</p>
             <div className='hover:bg-gray-300 p-1 rounded-full' onClick={()=>setIsVisble(false)}>

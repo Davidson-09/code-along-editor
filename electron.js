@@ -3,6 +3,10 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const { buildTree } = require('./src/utility/buildFileTree');
 const { openFile, saveFile } = require('./src/utility/fileFunctions');
+const os = require("os")
+const pty = require("node-pty")
+
+var shell = os.platform() === "win32" ? "powershell.exe" : "bash";
 
 let mainWindow;
 
@@ -23,9 +27,9 @@ function createWindow() {
     new Notification({title: 'Notification', body: message}).show()
   })
 
-  ipcMain.handle('open file dialog', ()=>{
+  ipcMain.handle('open file dialog', async ()=>{
     try{
-      const result = dialog.showOpenDialog(mainWindow, {
+      const result = await dialog.showOpenDialog(mainWindow, {
         properties: ['openDirectory']
       })
       return result
@@ -50,7 +54,6 @@ function createWindow() {
   })
 
   ipcMain.handle('save file', (_, {filePath, newValue})=>{
-    console.log(newValue, 'the new value')
     try{
       saveFile(filePath, newValue)
     }catch(e){
