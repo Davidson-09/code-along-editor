@@ -61,7 +61,6 @@ const deleteFile = (filePath) => {
 
 const renameFile = (oldPath, newName) => {
     const pathParts = oldPath.split('/');
-    const lastPart = pathParts.pop();
     const newPath = pathParts.join('/') + `/${newName}`;
     fs.rename(oldPath, newPath, (err) => {
         if (err) {

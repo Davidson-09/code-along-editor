@@ -31,5 +31,10 @@ contextBridge.exposeInMainWorld('electronApi', {
     renameFile(filePath, name){
       return ipcRenderer.invoke('rename file', {filePath, name})
     }
+  },
+  windowApi:{
+    minimize(){
+      return ipcRenderer.invoke('minimize window')
+    }
   }
 })

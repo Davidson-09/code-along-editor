@@ -3,17 +3,13 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const { buildTree } = require('./src/utility/buildFileTree');
 const { openFile, saveFile, deleteFile, renameFile } = require('./src/utility/fileFunctions');
-const os = require("os")
-const pty = require("node-pty")
-
-var shell = os.platform() === "win32" ? "powershell.exe" : "bash";
 
 let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 400,
     webPreferences: {
       nodeIntegration: true,
       worldSafeExecuteJavaScript: true,
@@ -75,6 +71,10 @@ function createWindow() {
     }catch(e){
       throw new Error(e)
     }
+  })
+
+  ipcMain.handle('minimize window', ()=>{
+    mainWindow.minimize()
   })
 
   const startURL = isDev

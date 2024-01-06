@@ -24,7 +24,6 @@ export default function EditorPage() {
   // first useEffect
   useEffect(()=>{
     // load current file
-    console.log(currentFile, 'the ccc')
     if (currentFile){
       setEditorValue(currentFile.fileContent)
       setCurrentFileName(currentFile.index)
@@ -83,6 +82,11 @@ export default function EditorPage() {
           setCurrentFileName('')
           setFileSelectorIsVisible(false)
         }
+      }
+
+      // minimize window
+      if ((event.ctrlKey || event.metaKey) && event.key === 'm'){
+        window.electronApi.windowApi.minimize()
       }
 
     };
@@ -149,7 +153,10 @@ export default function EditorPage() {
             {fileSelectorIsVisible && <FileSelector fileTree={fileTree} setIsVisble={setFileSelectorIsVisible} setData={setEditorValue} />}
             <div className='p-3 flex space-x-4'>
               <div className='flex space-x-4'>
-                <img src={fileIcon} alt='files' onClick={()=>setFileSelectorIsVisible(true)} className='cursor-pointer h-6 w-6'/>
+                <img src={fileIcon} alt='files' onClick={()=>{
+                  setReload(prevVal=> prevVal+1)
+                  setFileSelectorIsVisible(true)
+                  }} className='cursor-pointer h-6 w-6'/>
                 <img src={newFileIcon} alt='create new file' onClick={handleCreateNewFile} className='cursor-pointer h-6 w-6'/>
               </div>
               <p className='flex-1 text-center'>{currentFileName} {currentFile && editorValue !== currentFile.fileContent && <span>*</span>}</p>
