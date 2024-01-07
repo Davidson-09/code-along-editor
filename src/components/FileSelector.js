@@ -40,7 +40,11 @@ export default function FileSelector({fileTree, setIsVisble, setReload}) {
         <UncontrolledTreeEnvironment
         dataProvider={new StaticTreeDataProvider(fileTree, (item, data) => ({ ...item, data }))}
         getItemTitle={item => item.data}
-        onFocusItem={item => openFile(item)}
+        onFocusItem={item => {
+            if (!item.isFolder){
+                openFile(item)
+            }
+        }}
         onRenameItem={async(item, name) => {
             try{
                 const newPath = await window.electronApi.filesApi.renameFile(item.path, name)
