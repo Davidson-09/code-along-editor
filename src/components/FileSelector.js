@@ -3,12 +3,14 @@ import { UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider } from 'react
 import 'react-complex-tree/lib/style-modern.css';
 import cancelIcon from '../assets/icons/cancel.svg'
 import { getProgrammingLanguage } from '../utility/fileFunctions';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { changeCurrentFile } from '../redux/features/currentFIle/currentFileSlice'
 
-export default function FileSelector({fileTree, setIsVisble, setData}) {
+export default function FileSelector({fileTree, setIsVisble, setReload}) {
 
     const dispatch = useDispatch()
+
+    const currentFile = useSelector(state => state.currentFile.value)
 
     const openFile = async (item)=>{
         try{
@@ -39,7 +41,23 @@ export default function FileSelector({fileTree, setIsVisble, setData}) {
         dataProvider={new StaticTreeDataProvider(fileTree, (item, data) => ({ ...item, data }))}
         getItemTitle={item => item.data}
         onFocusItem={item => openFile(item)}
-        onRenameItem={async(item, name) => await window.electronApi.filesApi.renameFile(item.path, name)}
+        onRenameItem={async(item, name) => {
+            try{
+                const newPath = await window.electronApi.filesApi.renameFile(item.path, name)
+                console.log(newPath, 'from front')
+                setReload(prevVal => prevVal+1)
+                console.log(item, 'the item')
+                // change the name on item
+                let newCurrentFile = {...currentFile}
+                newCurrentFile.index = name
+                newCurrentFile.data = name
+                newCurrentFile.path = newPath
+                console.log(newCurrentFile, 'the new one')
+                dispatch(changeCurrentFile(newCurrentFile))
+            }catch(e){
+                alert(e)
+            }
+        }}
         viewState={{}}
         >
             <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />

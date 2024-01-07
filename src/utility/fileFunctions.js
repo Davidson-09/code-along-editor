@@ -54,19 +54,22 @@ const saveFile = (filePath, content) => {
 const deleteFile = (filePath) => {
     fs.unlink(filePath, (err) => {
         if (err) {
-            alert("could not delete file")
+            throw new Error("could not delete file")
         }
     });
 };
 
 const renameFile = (oldPath, newName) => {
-    const pathParts = oldPath.split('/');
-    const newPath = pathParts.join('/') + `/${newName}`;
+    const parts = oldPath.split('/');
+    let lastIndex = parts.length - 1;
+    parts[lastIndex] = newName
+    const newPath = parts.join('/');
     fs.rename(oldPath, newPath, (err) => {
         if (err) {
-            console.error(`Error renaming file from ${oldPath} to ${newPath}: ${err}`);
+            throw new Error(`Error renaming file from ${oldPath} to ${newPath}: ${err}`);
         } 
     });
+    return newPath
 };
 
 

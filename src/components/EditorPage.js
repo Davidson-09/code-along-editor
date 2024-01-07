@@ -75,12 +75,16 @@ export default function EditorPage() {
         event.preventDefault();
         // delete current file
         if (currentFile){
-          await window.electronApi.filesApi.deleteFile(currentFile.path)
-          dispatch(changeCurrentFile(null))
-          setReload(prevVal=> prevVal+1)
-          setEditorValue(null)
-          setCurrentFileName('')
-          setFileSelectorIsVisible(false)
+          try{
+            await window.electronApi.filesApi.deleteFile(currentFile.path)
+            dispatch(changeCurrentFile(null))
+            setReload(prevVal=> prevVal+1)
+            setEditorValue(null)
+            setCurrentFileName('')
+            setFileSelectorIsVisible(false)
+          }catch(e){
+            alert(e)
+          }
         }
       }
 
@@ -150,7 +154,7 @@ export default function EditorPage() {
       {
         editorIsVisible?(
           <div>
-            {fileSelectorIsVisible && <FileSelector fileTree={fileTree} setIsVisble={setFileSelectorIsVisible} setData={setEditorValue} />}
+            {fileSelectorIsVisible && <FileSelector fileTree={fileTree} setIsVisble={setFileSelectorIsVisible} setData={setEditorValue} setReload={setReload} />}
             <div className='p-3 flex space-x-4'>
               <div className='flex space-x-4'>
                 <img src={fileIcon} alt='files' onClick={()=>{
@@ -165,8 +169,17 @@ export default function EditorPage() {
               editorValue !== null? (
                 <Editor height="100vh" defaultLanguage='javascript' language={currentLanguage} value={editorValue} onChange={(value)=> handleEditorChange(value)}/>
               ):(
-                <div className='h-screen w-full bg-gray-100 flex justify-center items-center'>
+                <div className='h-screen w-full bg-gray-100 flex justify-center items-center flex-col space-y-4'>
                   <p className='text-center px-4'>Click on the file icon in the top left corner to select a file or create a new file to get started</p>
+                  <div>
+                    <p className='font-bold text-gray-500 text-center mb-2'>Useful Tips</p>
+                    <ul className='space-y-2 text-sm'>
+                      <li>Ctrl+m - Minimize window</li>
+                      <li>Ctrl+s - Save file changes</li>
+                      <li>Ctrl+d - Delete file</li>
+                      <li>F2 - rename file</li>
+                    </ul>
+                  </div>
                 </div>
               )
             }
@@ -181,7 +194,6 @@ export default function EditorPage() {
           </div>
         )
       }
-      {/* <TerminalComponent setTerminalIsVisible={setTerminalIsVisible} terminalIsVisible={terminalIsVisible}/> */}
     </div>
   )
 }
