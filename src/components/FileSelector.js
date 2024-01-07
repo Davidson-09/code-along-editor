@@ -1,35 +1,49 @@
-import React, { useEffect } from 'react'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { TreeView } from '@mui/x-tree-view/TreeView';
-import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import React from 'react'
+import { UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider } from 'react-complex-tree';
+import 'react-complex-tree/lib/style-modern.css';
+import cancelIcon from '../assets/icons/cancel.svg'
+import { getProgrammingLanguage } from '../utility/fileFunctions';
+import { useDispatch } from 'react-redux'
+import { changeCurrentFile } from '../redux/features/currentFIle/currentFileSlice'
 
-export default function FileSelector({fileTree}) {
+export default function FileSelector({fileTree, setIsVisble, setData}) {
 
-    const renderTree = (nodes) => (
-        <TreeItem key={Math.random().toString()} nodeId={Math.random().toString()} label={Math.random().toString()}>
-          {Array.isArray(nodes.children)
-            ? nodes.children.map((node) => renderTree(node))
-            : null}
-        </TreeItem>
-    );
+    const dispatch = useDispatch()
 
-    useEffect(()=>{
-        console.log(fileTree, 'from component')
-    })
+    const openFile = async (item)=>{
+        try{
+            const fileContent = await window.electronApi.filesApi.openFile(item)
+            const newCurrentFile = {
+                ...item,
+                isNewFile: false,
+                programmingLanguage: getProgrammingLanguage(item.path),
+                fileContent
+            }
+            dispatch(changeCurrentFile(newCurrentFile))
+            // update current file item
+        } catch(e){
+            alert(e)
+        }
+    }
 
     return (
-    <div className='w-40 h-screen absolute bg-black border border-black border-r-gray-700 z-10 top-0 '>
-        <p className='text-white p-3'>File Explorer</p>
-        <TreeView
-        aria-label="file system navigator"
-        defaultCollapseIcon={<ExpandMoreIcon />}
-        defaultExpandIcon={<ChevronRightIcon />}
-        sx={{ height: 240, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
-        className='text-white'
+    <div className='h-screen absolute bg-white border border-black border-r-gray-700 z-30 top-0 overflow-scroll max-w-sm'>
+        <div className='bg-gray-200 flex items-center justify-between p-3'>
+            <p className='text-black'>File Explorer</p>
+            <div className='hover:bg-gray-300 p-1 rounded-full' onClick={()=>setIsVisble(false)}>
+                <img src={cancelIcon} alt='close file selector' className='h-4 w-4'/>
+            </div>
+        </div>
+        
+        <UncontrolledTreeEnvironment
+        dataProvider={new StaticTreeDataProvider(fileTree, (item, data) => ({ ...item, data }))}
+        getItemTitle={item => item.data}
+        onFocusItem={item => openFile(item)}
+        onRenameItem={async(item, name) => await window.electronApi.filesApi.renameFile(item.path, name)}
+        viewState={{}}
         >
-        {renderTree(fileTree)}
-        </TreeView>
+            <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />
+        </UncontrolledTreeEnvironment>
     </div>
 
     )
