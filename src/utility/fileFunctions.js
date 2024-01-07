@@ -64,7 +64,7 @@ const renameFile = (oldPath, newName) => {
     const newPath = pathParts.join('/') + `/${newName}`;
     fs.rename(oldPath, newPath, (err) => {
         if (err) {
-            console.error(`Error renaming file from ${oldPath} to ${newPath}: ${err}`);
+            alert(`Error renaming file from ${oldPath} to ${newPath}: ${err}`);
         } 
     });
 };
