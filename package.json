@@ -1,9 +1,9 @@
 {
-  "name": "code-along-editor",
+  "name": "hover-editor",
   "main": "electron.js",
   "build": {
-    "appId": "com.example.myapp",
-    "productName": "My Electron App",
+    "appId": "com.hovereditor",
+    "productName": "Hover Editor",
     "directories": {
       "output": "dist"
     }
