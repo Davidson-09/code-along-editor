@@ -64,12 +64,12 @@ const renameFile = (oldPath, newName) => {
     let lastIndex = parts.length - 1;
     parts[lastIndex] = newName
     const newPath = parts.join('/');
-    console.log(newPath, 'new path')
     fs.rename(oldPath, newPath, (err) => {
         if (err) {
             throw new Error(`Error renaming file from ${oldPath} to ${newPath}: ${err}`);
         } 
     });
+    return newPath
 };
 
 

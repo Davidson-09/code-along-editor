@@ -67,7 +67,7 @@ function createWindow() {
 
   ipcMain.handle('rename file', (_, {filePath, name})=>{
     try{
-      renameFile(filePath, name)
+      return renameFile(filePath, name)
     }catch(e){
       throw new Error(e)
     }

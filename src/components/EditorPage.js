@@ -154,7 +154,7 @@ export default function EditorPage() {
       {
         editorIsVisible?(
           <div>
-            {fileSelectorIsVisible && <FileSelector fileTree={fileTree} setIsVisble={setFileSelectorIsVisible} setData={setEditorValue} />}
+            {fileSelectorIsVisible && <FileSelector fileTree={fileTree} setIsVisble={setFileSelectorIsVisible} setData={setEditorValue} setReload={setReload} />}
             <div className='p-3 flex space-x-4'>
               <div className='flex space-x-4'>
                 <img src={fileIcon} alt='files' onClick={()=>{
@@ -194,7 +194,6 @@ export default function EditorPage() {
           </div>
         )
       }
-      {/* <TerminalComponent setTerminalIsVisible={setTerminalIsVisible} terminalIsVisible={terminalIsVisible}/> */}
     </div>
   )
 }
