@@ -39,7 +39,13 @@ export default function FileSelector({fileTree, setIsVisble, setData}) {
         dataProvider={new StaticTreeDataProvider(fileTree, (item, data) => ({ ...item, data }))}
         getItemTitle={item => item.data}
         onFocusItem={item => openFile(item)}
-        onRenameItem={async(item, name) => await window.electronApi.filesApi.renameFile(item.path, name)}
+        onRenameItem={async(item, name) => {
+            try{
+                await window.electronApi.filesApi.renameFile(item.path, name)
+            }catch(e){
+                alert(e)
+            }
+        }}
         viewState={{}}
         >
             <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />

@@ -75,12 +75,16 @@ export default function EditorPage() {
         event.preventDefault();
         // delete current file
         if (currentFile){
-          await window.electronApi.filesApi.deleteFile(currentFile.path)
-          dispatch(changeCurrentFile(null))
-          setReload(prevVal=> prevVal+1)
-          setEditorValue(null)
-          setCurrentFileName('')
-          setFileSelectorIsVisible(false)
+          try{
+            await window.electronApi.filesApi.deleteFile(currentFile.path)
+            dispatch(changeCurrentFile(null))
+            setReload(prevVal=> prevVal+1)
+            setEditorValue(null)
+            setCurrentFileName('')
+            setFileSelectorIsVisible(false)
+          }catch(e){
+            alert(e)
+          }
         }
       }
 
