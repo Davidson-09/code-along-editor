@@ -34,6 +34,7 @@ function getProgrammingLanguage(filePath) {
         html: 'HTML',
         css: 'CSS',
         txt: 'Plain Text',
+        ts: 'typescript'
         // Add more extensions and corresponding languages as needed
     };
 
