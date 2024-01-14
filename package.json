@@ -1,11 +1,22 @@
 {
   "name": "hover-editor",
-  "main": "electron.js",
+  "main": "public/electron.js",
+  "productName": "Hover Editor",
   "build": {
     "appId": "com.hovereditor",
     "productName": "Hover Editor",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "publish": {
+      "provider": "github",
+      "repo": "code-along-editor",
+      "owner": "Davidson-09"
     }
   },
   "version": "0.1.0",
@@ -23,6 +34,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "electron-is-dev": "^2.0.0",
     "node-pty": "^1.0.0",
     "react": "^18.2.0",
     "react-complex-tree": "^2.3.2",
@@ -41,7 +53,13 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "electron .",
-    "build-electron": "mkdir build/src && cp -r electron/. build/electron && cp -r src/shared/. build/src/shared"
+    "build-electron": "mkdir build/src && cp -r electron/. build/electron && cp -r src/shared/. build/src/shared",
+    "dist:mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=build/assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "dist:win": "electron-packager . hover-editor --overwrite --asar=true --platform=win32 --arch=ia32 --icon=build/assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName='Hover Editor'",
+    "dist:linux": "electron-packager . hover-editor --overwrite --asar=true --platform=linux --arch=x64 --icon=build/assets/icons/png/1024x1024.png --prune=true --out=release-builds",
+    "postinstall": "electron-builder install-app-deps",
+    "electron-pack": "npm run build --em.main=build/electron.js",
+    "preelectron-pack": "npm run build"
   },
   "eslintConfig": {
     "extends": [
@@ -67,8 +85,7 @@
     "@babel/preset-react": "^7.23.3",
     "electron": "^28.0.0",
     "electron-builder": "^24.9.1",
-    "electron-is-dev": "^2.0.0",
-    "electron-rebuild": "^3.2.9",
+    "electron-packager": "^17.1.2",
     "tailwindcss": "^3.3.6",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
@@ -78,6 +95,7 @@
     "path": false,
     "os": false
   },
+  "author": "Davidson Akra",
   "homepage": "./",
-  "author": "Davidson Akra"
+  "description": "Follow coding tutorials easily"
 }
