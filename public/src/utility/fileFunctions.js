@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 const openFile =(item)=>{
     const filePath = item.path
@@ -33,8 +34,7 @@ function getProgrammingLanguage(filePath) {
         html: 'HTML',
         css: 'CSS',
         txt: 'Plain Text',
-        ts: 'typescript',
-        sol: 'solidity'
+        ts: 'typescript'
         // Add more extensions and corresponding languages as needed
     };
 

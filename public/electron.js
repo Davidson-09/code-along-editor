@@ -16,7 +16,8 @@ function createWindow() {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
-    alwaysOnTop: true
+    alwaysOnTop: true,
+    icon: path.join(__dirname, 'assets/icons/png/64x64.png')
   });
 
   ipcMain.on('notify', (_, message)=>{
