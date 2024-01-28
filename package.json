@@ -3,7 +3,7 @@
   "main": "public/electron.js",
   "productName": "Hover Editor",
   "build": {
-    "appId": "com.hovereditor",
+    "appId": "com.hover.editor",
     "productName": "Hover Editor",
     "directories": {
       "output": "dist",
@@ -99,5 +99,9 @@
   },
   "author": "Davidson Akra",
   "homepage": "./",
-  "description": "Follow coding tutorials easily"
+  "description": "Follow coding tutorials easily",
+  "nsis":{
+    "allowToChangeInstallationDirectory": true,
+    "oneClick": false
+  }
 }
