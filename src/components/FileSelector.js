@@ -56,7 +56,6 @@ export default function FileSelector({fileTree, setIsVisble, setReload}) {
                 newCurrentFile.index = name
                 newCurrentFile.data = name
                 newCurrentFile.path = newPath
-                console.log(newCurrentFile, 'the new one')
                 dispatch(changeCurrentFile(newCurrentFile))
             }catch(e){
                 alert(e)
